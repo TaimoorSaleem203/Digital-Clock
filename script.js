@@ -1,16 +1,40 @@
 const clock = document.querySelector(".clock")
 const timer = document.querySelector(".timer")
+
 const timerBtn = document.querySelector(".timerbtn")
+const clockBtn = document.querySelector(".clockbtn")
 const stopBtn = document.querySelector(".stopbtn")
 
-let formattedTimer
-let currentTime
-let isRunning = false
-let intervalID = null
+let formattedTimer; let currentTime; let isRunning = false; let intervalID = null
+let count = 0; let min = 0; let sec = 0; let hr = 0
 
-function stopWatch() {
-    console.log("click me");
+let mode = "clock"
 
+function updateWatch() {
+    count++
+
+    if (count == 100) {
+        sec++
+        count = 0
+    }
+
+    if (sec == 60) {
+        min++
+        sec = 0
+    }
+
+    if (min == 60) {
+        hr++
+        min = 0
+        sec = 0
+    }
+
+    const fhr = hr < 10 ? `0${hr}` : hr
+    const fmin = min < 10 ? `0${min}` : min
+    const fsec = sec < 10 ? `0${sec}` : sec
+    const fcount = count < 10 ? `0${count}` : count
+
+    clock.textContent = `${fhr}:${fmin}:${fsec}:${fcount}`
 }
 
 function updateTimer() {
@@ -20,8 +44,16 @@ function updateTimer() {
         return
     }
 
+    let hr = Math.floor(formattedTimer / 3600) // 3675 / 3600 = 1
+    let min = Math.floor((formattedTimer % 3600) / 60) // ((3675 % 3600) / 60) = 75 / 60 = 1.02 = 1
+    let sec = formattedTimer % 60 // (3675 % 60) = 15
+
+    const fhr = hr < 10 ? `0${hr}` : hr
+    const fmin = min < 10 ? `0${min}` : min
+    const fsec = sec < 10 ? `0${sec}` : sec
+
+    clock.textContent = `${fhr}:${fmin}:${fsec}`
     formattedTimer--
-    clock.textContent = formattedTimer < 10 ? `00:00:0${formattedTimer}` : `00:00:${formattedTimer}`
 }
 
 function updateClock() {
@@ -49,86 +81,113 @@ function updateClock() {
     clock.textContent = currentTime
 }
 
-timerBtn.addEventListener("click", (e) => {
-    e.preventDefault()
-    clearInterval(intervalID)
+function handleTimerClick(e) {
 
-    if (timerBtn.textContent == "Timer") {
+    mode = "timer"
+    const input = timer.querySelector(".timer-input")
+    if (e.target.classList.contains("startBtn")) {
 
-        clock.textContent = "00:00:00"
-        timerBtn.textContent = "Clock"
+        let value = isRunning ? formattedTimer : input.value
+        if (value <= 0 || !value || isNaN(value)) return
 
-        timer.innerHTML =
-            `
-            <input type="number" class='timer-input' />
-            <button class='startBtn'>Start</button>
-            <button class='stopBtn'>Stop</button>
-            <button class='resetBtn'>Reset</button>
-        `
-        timer.addEventListener("click", (e) => {
-            const input = timer.querySelector(".timer-input")
-            if (e.target.classList.contains("startBtn")) {
-
-                let value;
-                if (isRunning) value = formattedTimer
-                else {
-                    value = Number(input.value)
-                    if (value <= 0 || !value) return
-                }
-
-                clock.textContent = value < 10 ? `00:00:0${value}` : `00:00:${value}`
-                formattedTimer = value
-                isRunning = true
-
-                clearInterval(intervalID)
-                intervalID = setInterval(updateTimer, 1000)
-
-                e.target.disabled = true
-
-            }
-
-            else if (e.target.classList.contains("stopBtn")) {
-                clearInterval(intervalID)
-
-                timer.querySelector(".startBtn").disabled = false
-            }
-
-            else if (e.target.classList.contains("resetBtn")) {
-                clearInterval(intervalID)
-                isRunning = false
-                timer.querySelector(".startBtn").disabled = false
-
-                formattedTimer = 0
-                clock.textContent = "00:00:00"
-            }
-
-        })
-    }
-    else if (timerBtn.textContent == "Clock") {
-        updateClock()
-
-        timerBtn.textContent = "Timer"
-        timer.innerHTML = ""
+        formattedTimer = value
+        input.value = ""
+        isRunning = true
 
         clearInterval(intervalID)
-        intervalID = setInterval(updateClock, 1000)
+        intervalID = setInterval(updateTimer, 1000)
+
+        e.target.disabled = true
+
     }
+
+    else if (e.target.classList.contains("stopBtn")) {
+        clearInterval(intervalID)
+        timer.querySelector(".startBtn").disabled = false
+    }
+
+    else if (e.target.classList.contains("resetBtn")) {
+        clearInterval(intervalID)
+        isRunning = false
+        timer.querySelector(".startBtn").disabled = false
+
+        formattedTimer = 0
+        clock.textContent = "00:00:00"
+    }
+}
+
+function handleStopClick(e) {
+    const target = e.target
+
+    if (target.classList.contains("startBtn")) {
+        intervalID = setInterval(updateWatch, 10)
+        timer.querySelector(".startBtn").disabled = true
+    }
+
+    else if (target.classList.contains("stopBtn")) {
+        clearInterval(intervalID)
+        timer.querySelector(".startBtn").disabled = false
+    }
+
+    else if (target.classList.contains("resetBtn")) {
+        clearInterval(intervalID)
+        count = 0; min = 0; sec = 0; hr = 0
+        clock.textContent = "00:00:00:00"
+        timer.querySelector(".startBtn").disabled = false
+    }
+}
+
+timer.addEventListener("click", (e) => {
+    e.preventDefault()
+    if(mode == "timer") handleTimerClick(e)
+    else if(mode == "stop") handleStopClick(e)
 })
 
-stopBtn.addEventListener("click", (e) => {
+timerBtn.addEventListener("click", (e) => {
     e.preventDefault()
+    mode = "timer"
     clearInterval(intervalID)
-    
+
     clock.textContent = "00:00:00"
     timer.innerHTML =
         `
-            <button class='startBtn'>Start</button>
-            <button class='stopBtn'>Stop</button>
-            <button class='resetBtn'>Reset</button>
-        `
-    
-    
+            <input type="number" class='timer-input' placeholder="Input Seconds (1hr = 3600s)"/>
+            <div class="btn-container">
+                <button class='startBtn'>Start</button>
+                <button class='stopBtn'>Stop</button>
+                <button class='resetBtn'>Reset</button>
+            </div>
+                `
 })
+
+
+clockBtn.addEventListener("click", (e) => {
+    e.preventDefault()
+    mode = "clock"
+    clearInterval(intervalID)
+
+    timer.innerHTML = ""
+    updateClock()
+    intervalID = setInterval(updateClock, 1000)
+})
+
+
+stopBtn.addEventListener("click", (e) => {
+    e.preventDefault()
+    mode = "stop"
+    clearInterval(intervalID)
+
+    clock.textContent = "00:00:00:00"
+    count = 0; min = 0; sec = 0; hr = 0
+
+    timer.innerHTML =
+        `
+        <button class='startBtn'>Start</button>
+        <button class='stopBtn'>Stop</button>
+        <button class='resetBtn'>Reset</button>
+    `
+})
+
 
 updateClock()
 intervalID = setInterval(updateClock, 1000)

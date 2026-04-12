@@ -1,17 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Clock</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    
-    <p class="clock"></p>
-    <button class="timerbtn">Timer</button>
-    <button class="stopbtn">Stop Watch</button>
-    <div class="timer"></div>
+
+    <div class="bg-grid"></div>
+
+    <main class="app-shell">
+
+        <header class="app-header">
+            <div class="brand">
+                <span class="brand-dot"></span>
+                <span class="brand-name">CHRONOS</span>
+            </div>
+            <div class="status-indicator">
+                <span class="pulse"></span>
+                <span class="status-text">LIVE</span>
+            </div>
+        </header>
+
+        <section class="display-section">
+            <div class="display-frame">
+                <div class="display-inner">
+                    <p class="clock">00:00:00</p>
+                    <div class="display-label">CURRENT TIME</div>
+                </div>
+            </div>
+            <div class="timer"></div>
+        </section>
+
+        <nav class="control-bar">
+            <button class="timerbtn ctrl-btn">
+                <span class="btn-icon"><i class="ri-timer-2-line"></i></span>
+                <span class="btn-label">Timer</span>
+            </button>
+            <button class="clockbtn ctrl-btn">
+                <span class="btn-icon"><i class="ri-time-line"></i></span>
+                <span class="btn-label">Clock</span>
+            </button>
+            <button class="stopbtn ctrl-btn">
+                <span class="btn-icon"><i class="ri-timer-line"></i></span>
+                <span class="btn-label">Stop Watch</span>
+            </button>
+        </nav>
+
+    </main>
 
     <script src="script.js"></script>
 </body>
+
 </html>

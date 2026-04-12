@@ -1,0 +1,379 @@
+/* ─── Reset & Base ─── */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ─── Design Tokens ─── */
+:root {
+    --bg:           #080c10;
+    --surface:      #0d1117;
+    --surface-2:    #161b22;
+    --border:       #21262d;
+    --border-glow:  #00e5ff33;
+    --accent:       #00e5ff;
+    --accent-dim:   #00b8cc;
+    --accent-glow:  #00e5ff22;
+    --text-primary: #e6edf3;
+    --text-muted:   #7d8590;
+    --text-dim:     #484f58;
+    --danger:       #ff4757;
+    --success:      #23d18b;
+
+    --font-mono:    'Share Tech Mono', monospace;
+    --font-ui:      'Rajdhani', sans-serif;
+
+    --radius-sm:    6px;
+    --radius-md:    12px;
+    --radius-lg:    20px;
+
+    --transition:   all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Background Grid ─── */
+body {
+    min-height: 100vh;
+    background-color: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.bg-grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.bg-grid::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 50%, transparent 30%, var(--bg) 100%);
+}
+
+/* ─── App Shell ─── */
+.app-shell {
+    position: relative;
+    z-index: 1;
+    width: min(480px, 95vw);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow:
+        0 0 0 1px var(--border-glow),
+        0 32px 80px rgba(0,0,0,0.6),
+        0 0 60px var(--accent-glow);
+    animation: fadeUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Header ─── */
+.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-ui);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: var(--text-muted);
+}
+
+.brand-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--success);
+}
+
+.pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 6px var(--success);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.4; transform: scale(0.8); }
+}
+
+/* ─── Display Section ─── */
+.display-section {
+    padding: 40px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.display-frame {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 2px;
+    position: relative;
+}
+
+.display-frame::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: calc(var(--radius-md) + 1px);
+    background: linear-gradient(135deg, var(--accent-glow), transparent 60%);
+    pointer-events: none;
+}
+
+.display-inner {
+    background: var(--bg);
+    border-radius: calc(var(--radius-md) - 2px);
+    padding: 28px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ─── Clock ─── */
+.clock {
+    font-family: var(--font-mono);
+    font-size: clamp(36px, 10vw, 52px);
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-shadow:
+        0 0 20px var(--accent),
+        0 0 40px var(--accent-glow);
+    line-height: 1;
+    transition: var(--transition);
+}
+
+.display-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+}
+
+/* ─── Timer Slot (injected by JS) ─── */
+.timer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    animation: fadeIn 0.3s ease both;
+}
+
+.btn-container{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Input injected by JS */
+.timer .timer-input {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 20px;
+    text-align: center;
+    padding: 12px 16px;
+    outline: none;
+    transition: var(--transition);
+    letter-spacing: 2px;
+}
+
+.timer .timer-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.timer .timer-input::placeholder { color: var(--text-dim); }
+
+.timer .timer-input::-webkit-inner-spin-button,
+.timer .timer-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+/* Button row injected by JS */
+.timer .startBtn,
+.timer .stopBtn,
+.timer .resetBtn {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: var(--transition);
+    text-transform: uppercase;
+}
+
+/* Make buttons appear in a row */
+.timer:has(.startBtn) {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.timer:has(.timer-input) {
+    flex-direction: column;
+}
+
+.timer:has(.timer-input) .startBtn,
+.timer:has(.timer-input) .stopBtn,
+.timer:has(.timer-input) .resetBtn {
+    flex: 1;
+}
+
+/* When only buttons (stopwatch mode) */
+.timer .startBtn {
+    background: var(--accent);
+    color: var(--bg);
+}
+.timer .startBtn:hover:not(:disabled) {
+    background: var(--accent-dim);
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+.timer .startBtn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.timer .stopBtn {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+}
+.timer .stopBtn:hover {
+    background: rgba(255, 71, 87, 0.1);
+}
+
+.timer .resetBtn {
+    background: var(--surface-2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+}
+.timer .resetBtn:hover {
+    background: var(--border);
+    color: var(--text-primary);
+}
+
+/* ─── Control Bar ─── */
+.control-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--border);
+}
+
+.ctrl-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 16px 8px;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--border);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.ctrl-btn:last-child { border-right: none; }
+
+.ctrl-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+}
+
+.ctrl-btn:hover {
+    background: var(--surface-2);
+    color: var(--text-primary);
+}
+
+.ctrl-btn:hover::before {
+    transform: scaleX(1);
+}
+
+.ctrl-btn:active {
+    background: var(--accent-glow);
+}
+
+.btn-icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.btn-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 400px) {
+    .display-section { padding: 28px 20px 24px; }
+    .clock { font-size: 32px; }
+    .btn-label { font-size: 9px; letter-spacing: 1px; }
+}
